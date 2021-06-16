@@ -13,9 +13,9 @@ public class SourceCommand extends SlashCommand {
 
     @Override
     public void onCommand(SlashCommandEvent event) {
-        event.replyEmbeds(Utils.simpleEmbed(event.getUser(), "*Aspect* • Source",
-                "Unfortunately, Aspect is not open source as of yet. However it does plan to be in the future, " +
-                        "keep an eye on <https://www.github.com/Ankoki-Dev/> to see if it's put up!")).setEphemeral(true)
+        event.replyEmbeds(Utils.simpleEmbed(event.getUser(), "Aspect-Bot Source",
+                "Aspect is an open source project, and is available to see on GitHub!",
+                "Find it at <https://www.github.com/Ankoki-Dev/Aspect/>! Any contributions are welcome:)")).setEphemeral(true)
                 .queue();
     }
 }

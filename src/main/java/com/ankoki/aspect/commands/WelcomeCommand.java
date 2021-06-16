@@ -9,9 +9,11 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 public class WelcomeCommand extends SlashCommand {
 
     public WelcomeCommand() {
-        super(new CommandData("welcome", "Sends the welcome screen."), Permission.ADMINISTRATOR);
+        super(new CommandData("welcome", "Sends the welcome screen."),
+                Permission.ADMINISTRATOR);
     }
 
+    //FIX SOMEHOW PLS
     @Override
     public void onCommand(SlashCommandEvent event) {
         event.reply("").addFile(Utils.getImage("aspect_logo.png")).queue();

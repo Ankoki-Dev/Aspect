@@ -6,12 +6,16 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Stream;
 
-public class Utils {
+public final class Utils {
     private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 
     public static String joinedArray(String[] array, String joinBy) {
@@ -44,11 +48,9 @@ public class Utils {
         return builder.toString();
     }
 
+    //This is making me scream and not in a good way
     public static File getImage(String imageName) {
-        String pathName = Utils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        pathName = pathName.substring(0, pathName.length() - 15);
-        pathName = pathName + "src|main|java|com|ankoki|aspect|images|".replace("|", File.separator) + imageName;
-        return new File(pathName);
+        return new File(Utils.class.getResource(imageName).getFile());
     }
 
     public static String titleCaseConversion(String inputString) {

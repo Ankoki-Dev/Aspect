@@ -10,13 +10,9 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.reflections.Reflections;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 //This is Aspect, the new bot for the Aspect discord.
 public class Aspect {
@@ -26,8 +22,8 @@ public class Aspect {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        System.out.println("aspect is enabling");
         instance = new Aspect();
+        instance.log("Starting.");
 
         //Logs into the discord bot.
         try {
@@ -35,7 +31,7 @@ public class Aspect {
             jda = jda.awaitReady();
             JDABuilder.createLight(Secrets.BOT_TOKEN, Arrays.asList(GatewayIntent.values()))
                     .addEventListeners(new CommandListener())
-                    .setActivity(Activity.listening("k-pop"))
+                    .setActivity(Activity.listening("no one."))
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .build();
@@ -44,13 +40,16 @@ public class Aspect {
             return;
         }
 
-        //Loads and registers all command classes.
-        List<Class> classes = instance.getClasses("com.ankoki.aspect.commands");
+        instance.log(String.format("I was enabled in %sms. Registering slash commands.", System.currentTimeMillis() - start));
+
+        //Loads and registers all command classes. Uses the Reflections api.
+        Reflections reflections = new Reflections("com.ankoki.aspect.commands");
+        Set<Class<? extends SlashCommand>> classes = reflections.getSubTypesOf(SlashCommand.class);
         List<CommandData> allData = new ArrayList<>();
-        for (Class clazz : classes) {
+        for (Class<? extends SlashCommand> clazz : classes) {
             try {
                 if (SlashCommand.class.isAssignableFrom(clazz)) {
-                    SlashCommand command = (SlashCommand) clazz.getDeclaredConstructor().newInstance();
+                    SlashCommand command = clazz.getDeclaredConstructor().newInstance();
                     allData.add(command.getData());
                     instance.commands.add(command);
                 }
@@ -59,56 +58,15 @@ public class Aspect {
             }
         }
 
+        //Updates commands, instead of globally pushing updates, update the guilds we are in (which is immediate)
         jda.getGuilds().forEach(guild -> {
             CommandListUpdateAction commands = guild.updateCommands();
             commands.addCommands(allData).queue();
         });
-
-        System.out.printf("aspect was enabled in %sms%n", System.currentTimeMillis() - start);
     }
 
-    private List<Class> getClasses(String packageName) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources;
-        try {
-            resources = classLoader.getResources(path);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        List<File> dirs = new ArrayList<>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-        ArrayList<Class> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes;
-    }
-
-    private List<Class> findClasses(File directory, String packageName) {
-        List<Class> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-        File[] files = directory.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                try {
-                    classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return classes;
+    public void log(String s) {
+        System.out.println("[Aspect] Aspect-Bot | " + s);
     }
 
     public List<SlashCommand> getCommands() {
