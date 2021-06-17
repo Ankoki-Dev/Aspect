@@ -44,11 +44,6 @@ public final class Utils {
         return builder.toString();
     }
 
-    //This is making me scream and not in a good way
-    public static File getImage(String imageName) {
-        return new File(Utils.class.getResource(imageName).getFile());
-    }
-
     public static String titleCaseConversion(String inputString) {
         if (inputString == null || inputString.isEmpty() || inputString.isBlank()) return "";
         if (inputString.length() == 1) return inputString.toUpperCase();
