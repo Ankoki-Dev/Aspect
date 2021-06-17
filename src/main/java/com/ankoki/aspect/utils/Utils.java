@@ -6,10 +6,6 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
