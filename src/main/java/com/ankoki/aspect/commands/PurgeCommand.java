@@ -27,10 +27,12 @@ public class PurgeCommand extends SlashCommand {
         int amount = Math.max(2, Math.min(200, amountMapping == null ? 100 : (int) amountMapping.getAsLong()));
         MessageChannel channel = channelMapping == null ? event.getChannel() : channelMapping.getAsMessageChannel();
         assert channel != null;
+        event.replyEmbeds(Utils.simpleEmbed(event.getUser(), "**Purging**",
+                "The previous " + amount + " are being purged.")).setEphemeral(true).queue();
         channel.getIterableHistory()
                 .takeAsync(amount)
-                .thenAccept(channel::purgeMessages);
-        event.replyEmbeds(Utils.simpleEmbed(event.getUser(), "**Successful Purge**",
-                "The previous " + amount + " messages have been purged.")).setEphemeral(true).queue();
+                .thenAccept(channel::purgeMessages)
+                .thenRun(() -> event.getHook().editOriginalEmbeds(Utils.simpleEmbed(event.getUser(), "**Successful Purge**",
+                        "The previous " + amount + " messages have been purged.")).queue());
     }
 }

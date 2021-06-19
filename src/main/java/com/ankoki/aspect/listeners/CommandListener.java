@@ -12,18 +12,19 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
-        //We don't want to continue if there is no guild.
+        // We don't want to continue if there is no guild.
         if (event.getGuild() == null) return;
-        //Gets all the commands that have been registered
+        // Gets all the commands that have been registered
         for (SlashCommand command : Aspect.getInstance().getCommands()) {
-            //Checks if the command is the same its alias.
+            // Checks if the command is the same its alias.
             if (command.getData().getName().equalsIgnoreCase(event.getName())) {
                 Permission[] permissions = command.getPermissions();
                 if (permissions == null || event.getMember().hasPermission(permissions)) {
-                    //It matches and the player has the permission! We now execute this command
+                    // It matches and the player has the permission! We now execute this command
                     command.onCommand(event);
+                    Utils.logCommand(event);
                 } else {
-                    //If they do not have the permission, tell them this!
+                    // If they do not have the permission, tell them this!
                     event.reply("*You don't have permission to execute this!*\n" +
                             "You require **one** of the following permissions:\n" +
                             Utils.readablePermissions(permissions)).setEphemeral(true).queue();

@@ -1,14 +1,18 @@
 package com.ankoki.aspect.utils;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.awt.*;
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 public final class Utils {
@@ -58,5 +62,26 @@ public final class Utils {
         });
         resultPlaceholder.setLength(resultPlaceholder.length() - 1);
         return resultPlaceholder.toString();
+    }
+
+    public static void logCommand(SlashCommandEvent event) {
+        Guild guild = event.getGuild();
+        assert guild != null;
+        if (guild.getIdLong() != 747818545466966176L) return;
+        TextChannel channel = guild.getTextChannelById(855869714806997032L);
+        List<OptionMapping> options = event.getOptions();
+        StringBuilder builder = new StringBuilder();
+        if (options.size() >= 1) {
+            for (OptionMapping mapping : options) {
+                builder.append("`").append(mapping.getAsString()).append("`, ");
+            }
+            builder.setLength(builder.length() - 2);
+        }
+        assert channel != null;
+        channel.sendMessage(Utils.simpleEmbed(event.getUser(), "Command Used",
+                "`User`: " + event.getUser().getAsTag(),
+                "`Command`: **/" + event.getName().toLowerCase() + "**",
+                "`Arguments`: " + (builder.length() >= 1 ? builder : "<none>"),
+                "`Channel`: " + event.getTextChannel().getAsMention())).queue();
     }
 }

@@ -14,6 +14,6 @@ public class TestCommand extends SlashCommand {
 
     @Override
     public void onCommand(SlashCommandEvent event) {
-        event.reply("Hey, this is a test command, running on a host from billy !").setEphemeral(true).queue();
+        event.reply("Hey, this is a test command!").setEphemeral(true).queue();
     }
 }

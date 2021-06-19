@@ -38,7 +38,7 @@ public class Lookup {
     }
 
     public static Lookup performLookup(Member member) {
-        return new Lookup(member.getEffectiveName(),
+        return new Lookup(member.getUser().getName(),
                 member.getUser().getAsTag(),
                 member.getNickname(),
                 member.getIdLong(),

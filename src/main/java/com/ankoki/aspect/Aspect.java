@@ -14,7 +14,7 @@ import org.reflections.Reflections;
 
 import java.util.*;
 
-//This is Aspect, the new bot for the Aspect discord.
+// This is Aspect, the new bot for the Aspect discord.
 public class Aspect {
     private static Aspect instance;
     private final List<SlashCommand> commands = new ArrayList<>();
@@ -25,13 +25,13 @@ public class Aspect {
         instance = new Aspect();
         instance.log("Starting.");
 
-        //Logs into the discord bot.
+        // Logs into the discord bot.
         try {
             jda = JDABuilder.createDefault(Secrets.BOT_TOKEN).build();
             jda = jda.awaitReady();
             JDABuilder.createLight(Secrets.BOT_TOKEN, Arrays.asList(GatewayIntent.values()))
                     .addEventListeners(new CommandListener())
-                    .setActivity(Activity.listening("no one."))
+                    .setActivity(Activity.watching("everyone enjoy pride c:"))
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .build();
@@ -42,23 +42,22 @@ public class Aspect {
 
         instance.log(String.format("I was enabled in %sms. Registering slash commands.", System.currentTimeMillis() - start));
 
-        //Loads and registers all command classes. Uses the Reflections api.
+        // Loads and registers all command classes. Uses the Reflections api.
         Reflections reflections = new Reflections("com.ankoki.aspect.commands");
         Set<Class<? extends SlashCommand>> classes = reflections.getSubTypesOf(SlashCommand.class);
         List<CommandData> allData = new ArrayList<>();
         for (Class<? extends SlashCommand> clazz : classes) {
             try {
-                if (SlashCommand.class.isAssignableFrom(clazz)) {
-                    SlashCommand command = clazz.getDeclaredConstructor().newInstance();
-                    allData.add(command.getData());
-                    instance.commands.add(command);
-                }
+                SlashCommand command = clazz.newInstance();
+                allData.add(command.getData());
+                instance.commands.add(command);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        //Updates commands, instead of globally pushing updates, update the guilds we are in (which is immediate)
+        // Updates commands, instead of globally pushing updates (which can take up to an hour),
+        // update the guilds we are in (which is immediate)
         jda.getGuilds().forEach(guild -> {
             CommandListUpdateAction commands = guild.updateCommands();
             commands.addCommands(allData).queue();
