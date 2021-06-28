@@ -3,6 +3,8 @@ package com.ankoki.aspect;
 import com.ankoki.aspect.api.SlashCommand;
 import com.ankoki.aspect.gitignore.Secrets;
 import com.ankoki.aspect.listeners.CommandListener;
+import com.ankoki.aspect.listeners.JoinListener;
+import com.ankoki.aspect.utils.Utils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -22,16 +24,17 @@ public class Aspect {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
+        Utils.log("Bot is starting");
         instance = new Aspect();
-        instance.log("Starting.");
 
         // Logs into the discord bot.
         try {
             jda = JDABuilder.createDefault(Secrets.BOT_TOKEN).build();
             jda = jda.awaitReady();
             JDABuilder.createLight(Secrets.BOT_TOKEN, Arrays.asList(GatewayIntent.values()))
-                    .addEventListeners(new CommandListener())
-                    .setActivity(Activity.watching("everyone enjoy pride c:"))
+                    .addEventListeners(new CommandListener(),
+                            new JoinListener())
+                    .setActivity(Activity.watching("you guys!"))
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .build();
@@ -40,7 +43,7 @@ public class Aspect {
             return;
         }
 
-        instance.log(String.format("I was enabled in %sms. Registering slash commands.", System.currentTimeMillis() - start));
+        Utils.log(String.format("I was enabled in %sms. Registering slash commands.", System.currentTimeMillis() - start));
 
         // Loads and registers all command classes. Uses the Reflections api.
         Reflections reflections = new Reflections("com.ankoki.aspect.commands");
@@ -50,6 +53,7 @@ public class Aspect {
             try {
                 SlashCommand command = clazz.newInstance();
                 allData.add(command.getData());
+                Utils.debug(command.getData().getName() + " registered");
                 instance.commands.add(command);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -62,10 +66,6 @@ public class Aspect {
             CommandListUpdateAction commands = guild.updateCommands();
             commands.addCommands(allData).queue();
         });
-    }
-
-    public void log(String s) {
-        System.out.println("[Aspect] Aspect-Bot | " + s);
     }
 
     public List<SlashCommand> getCommands() {
