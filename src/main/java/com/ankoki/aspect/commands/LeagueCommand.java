@@ -33,7 +33,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 public class LeagueCommand extends SlashCommand {
 
     private static final RiotApi RIOT_API;
-    private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("hh:mm:ss dd/MM/yyyy UTC");
+    private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("hh:mm:ss dd/MM/yyyy");
 
     static {
         ApiConfig config = new ApiConfig().setKey(Secrets.RIOT_API_KEY);
