@@ -53,7 +53,6 @@ public class Aspect {
             try {
                 SlashCommand command = clazz.newInstance();
                 allData.add(command.getData());
-                Utils.debug(command.getData().getName() + " registered");
                 instance.commands.add(command);
             } catch (Exception ex) {
                 ex.printStackTrace();

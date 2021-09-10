@@ -1,5 +1,6 @@
 package com.ankoki.aspect.utils;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -17,23 +18,23 @@ import java.util.stream.Stream;
 
 public final class Utils {
     private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-
-    public static String joinedArray(String[] array, String joinBy) {
-        StringBuilder builder = new StringBuilder();
-        for (String string : array) {
-            builder.append(string).append(joinBy);
-        }
-        builder.setLength(builder.length() - 1);
-        return builder.toString();
-    }
+    private static final DateFormat LOG_FORMATTER = new SimpleDateFormat("hh:mm:ss");
 
     public static String formattedNow() {
         return DATE_FORMATTER.format(new Date());
     }
 
     public static MessageEmbed simpleEmbed(User user, String title, String... lines) {
-        return new MessageEmbed(null, title, joinedArray(lines, "\n"), null, null,
+        return new MessageEmbed(null, title, String.join("\n", lines), null, null,
                 new Color(196, 239, 231).getRGB(), null, null, null, null,
+                new MessageEmbed.Footer(user.getAsTag() + " • " + formattedNow(), user.getAvatarUrl(), null),
+                null, null);
+    }
+
+    public static MessageEmbed leagueEmbed(User user, String title, String... lines) {
+        return new MessageEmbed(null, title, String.join("\n", lines), null, null,
+                new Color(196, 239, 231).getRGB(), new MessageEmbed.Thumbnail("https://cdn.discordapp.com/attachments/780462754724577310/885703251134144552/lol_logo.png",
+                null, 0, 0), null, null, null,
                 new MessageEmbed.Footer(user.getAsTag() + " • " + formattedNow(), user.getAvatarUrl(), null),
                 null, null);
     }
@@ -85,12 +86,12 @@ public final class Utils {
                 "`Channel`: " + event.getTextChannel().getAsMention())).queue();
     }
 
-    public static void debug(String s) {
-        System.out.println(ConsoleColors.YELLOW + "[DEBUG] " + s);
+    public static void debug(Object object) {
+        System.out.println("[" + LOG_FORMATTER.format(new Date()) + "]" + ConsoleColors.YELLOW + " [DEBUG] " + ConsoleColors.CYAN + "Aspect-Bot | " + ConsoleColors.YELLOW + object);
     }
 
-    public static void log(String s) {
-        System.out.println(ConsoleColors.YELLOW + "[Aspect] Aspect-Bot | " + ConsoleColors.RESET + s);
+    public static void log(Object object) {
+        System.out.println("[" + LOG_FORMATTER.format(new Date()) + "]" + ConsoleColors.CYAN + " [Aspect] Aspect-Bot | " + ConsoleColors.RESET + object);
     }
 
     @SuppressWarnings("unused")

@@ -7,8 +7,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 
 public class NicknameCommand extends SlashCommand {
 
